@@ -3,14 +3,15 @@ import mongoose, { Types } from "mongoose"
 export interface IProduct {
     name: string,
     slug: string, 
-    description: string, 
+    description?: string, 
     price: number,
 }
 
 //2. define methods in interface here.  
 interface ProductModel extends mongoose.Model<IProduct> {
     //4. define method interface for get all
-    getAllProducts: Types.Array<IProduct>
+    getAllProducts(): Types.Array<IProduct>,
+    createNewProduct(attr: IProduct): IProduct
 
 }
 //2. schema 
@@ -27,10 +28,18 @@ const productSchema = new mongoose.Schema({
 })
 
 //3. get all 
-productSchema.static('getAllProducts', async () => {
-    return await Product.find({})
+productSchema.static('getAllProducts', async (req: Request, res: Response) => {
+    let saved = await Product.find({})
+    // console.log('products' , saved);
+    return saved
+    // res.send({rs:true, data: savedAll})
 })
 
+productSchema.static('createNewProduct', async function createNewProduct(attr: IProduct) {
+    const p = new Product (attr)
+    p.save() 
+    return p  
+}) 
 
 
 

@@ -58,6 +58,20 @@ route.get('/getUserAll', async (req: Request, res: Response) => {
     // Product.getAllProducts()
     res.send({rs:true, data: savedAll})
 })
+//get all products
+route.get('/getProductAll', async (req: Request, res: Response) => {
+    // let savedAll = await User.find({})
+    // console.log(savedAll);
+    let productList : Array<IProduct> = await Product.getAllProducts()
+    console.log(productList);
+    res.send({rs:true, data: productList})
+})
+
+//create a new 
+route.post('/create',async (req:Request, res: Response) => {
+    let result = await Product.createNewProduct(req.body)
+    res.send({rs:true, data: result})
+})
 
 export default route
 
