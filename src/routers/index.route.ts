@@ -1,7 +1,7 @@
 import { Router } from "express";
 import express, {Request, Response}  from "express"
 import {User} from "../models/user.model"
-import { Product } from "../models/product.model";
+import { Product , IProduct} from "../models/product.model";
 const route = Router() 
 route.post('/', (req: Request, res: Response) => {
 
@@ -51,12 +51,12 @@ route.post('/', (req: Request, res: Response) => {
     }
 
 })
-
-route.get('/getAll', (req: Request, res: Response) => {
-    const arr = Product.find()
-    console.log(arr)
-    // console.log("getall");
-    res.send({rs:true, data: "hello"})
+//get all users from the db
+route.get('/getUserAll', async (req: Request, res: Response) => {
+    let savedAll = await User.find({})
+    console.log(savedAll);
+    // Product.getAllProducts()
+    res.send({rs:true, data: savedAll})
 })
 
 export default route

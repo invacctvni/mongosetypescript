@@ -1,6 +1,6 @@
 import mongoose, { Types } from "mongoose"
 //class cannot used for type, but interface can be used as type. 
-interface IProduct {
+export interface IProduct {
     name: string,
     slug: string, 
     description: string, 
@@ -27,10 +27,8 @@ const productSchema = new mongoose.Schema({
 })
 
 //3. get all 
-productSchema.static('getAllProducts', () => {
-    const filter = {}
-    const arr = Product.find(filter)
-    console.log(arr);
+productSchema.static('getAllProducts', async () => {
+    return await Product.find({})
 })
 
 
