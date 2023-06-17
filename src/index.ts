@@ -3,7 +3,7 @@ import  {json} from 'body-parser'
 import { mongoConnection } from "./initialDB"
 import Todo from './models/todo.model'
 require('dotenv-flow').config() 
-import {User} from "./models/user.model"
+import {User, answer} from "./models/user.model"
 
 
 const app = express()
@@ -19,21 +19,26 @@ app.use('/', (req: Request, res: Response) => {
 
 
     run().catch(err => console.log(err));
-
+    // console.log(answer);
+    const userOne = User.myStaticMethod({
+        name: "Kevin",
+        email: 'bill@initech.com',
+        avatar: 'https://i.imgur.com/dM7Thhn.png'
+    })
     async function run() {
     // 4. Connect to MongoDB
     // await connect('mongodb://127.0.0.1:27017/test');
 
-    const user = new User({
-        name: 'Bill',
-        email: 'bill@initech.com',
-        avatar: 'https://i.imgur.com/dM7Thhn.png'
-    });
-    await user.save();
+        const user = new User({
+            name: 123,
+            email: 'bill@initech.com',
+            avatar: 'https://i.imgur.com/dM7Thhn.png'
+        });
+        await user.save();
 
-    console.log(user.email); // 'bill@initech.com'
-    res.send({rs:true, data: user})    
-}
+        console.log(user.email); // 'bill@initech.com'
+        res.send({rs:true, data: userOne})    
+    }
 
 })
 //connect to MongoDB Atlas
