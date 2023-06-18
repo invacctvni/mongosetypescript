@@ -8,8 +8,8 @@ export interface IUser {
 }
 
 //2. Define/create static method interface for userSchema. 
-interface UserModel extends Model<IUser> {
-    myStaticMethod(attr:IUser): IUser;
+export interface UserModel extends Model<IUser> {
+    createUser(attr:IUser): IUser;
     newUserName(attr:IUser) : string
 }
 
@@ -26,9 +26,10 @@ export const userSchema = new Schema<IUser, UserModel>({
 // 3. Create methods
 // export const User = model<IUser>('User', userSchema);
 
-userSchema.static('myStaticMethod', function myStaticMethod(attr: IUser) {
-
-  return new User(attr);
+userSchema.static('createUser',async (attr: IUser)=> {
+    const user = new User(attr)
+    await user.save()
+    return user;
 });
 
 userSchema.static('newUserName', function newUserName(attr: IUser) {
@@ -38,5 +39,5 @@ userSchema.static('newUserName', function newUserName(attr: IUser) {
 
 
 export const User = model<IUser, UserModel>('User', userSchema);
-// export const answer: IUser = User.myStaticMethod(); // 42
+
 

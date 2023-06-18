@@ -1,17 +1,21 @@
-import { UserRole } from './../models/userRole.model';
-import { UserInfo } from './../models/userInfo.model';
-import mongoose from 'mongoose';
+import { UserRole } from '../models/userRole.model';
+import { UserInfo } from '../models/userInfo.model';
+import mongoose, {Types} from 'mongoose';
 import { Router } from "express";
-import express, {Request, Response}  from "express"
-import {User} from "../models/user.model"
+import {Request, Response}  from "express"
+import {IUser, User, UserModel} from "../models/user.model"
 import { Product , IProduct} from "../models/product.model";
-import { UserRoleUser } from '../models/userRoleUser.model';
-const route = Router() 
+import {UserRoleUser, userRoleUserSchema} from "../models/userRoleUser.model";
+
+const route = Router()
+route.get('/',(req:Request,res:Response)=> {
+    res.send('<h1>connect to database </h1>')
+})
 route.post('/', (req: Request, res: Response) => {
 
     const {name, email, avatar} = req.body
     console.log(name, email, avatar);
-    const userZero = User.myStaticMethod({
+    const userZero = User.createUser({
         name,
         email, 
         avatar 
@@ -25,7 +29,7 @@ route.post('/', (req: Request, res: Response) => {
 
     // run().catch(err => console.log(err));
     // console.log(answer);
-    const userOne = User.myStaticMethod({
+    const userOne = User.createUser({
         name: "Kevin",
         email: 'bill@initech.com',
         avatar: 'https://i.imgur.com/dM7Thhn.png'
@@ -66,7 +70,7 @@ route.get('/getUserAll', async (req: Request, res: Response) => {
 route.get('/getProductAll', async (req: Request, res: Response) => {
     // let savedAll = await User.find({})
     // console.log(savedAll);
-    let productList : Array<IProduct> = await Product.getAllProducts()
+    let productList : Types.Array<IProduct> = await Product.getAllProducts()
     console.log(productList);
     res.send({rs:true, data: productList})
 })
@@ -97,25 +101,34 @@ route.post('/createNewUserInfo', async (req: Request, res: Response) => {
 })
 
 route.post('/createUserRole', async (req: Request, res: Response) => {
+    console.log(req.body)
     let result = await UserRole.createUserRole(req.body)
+    res.send({rs:true, data: result})
+})
+
+route.post('/createUser',async(req:Request,res:Response) => {
+    let result = await User.createUser(req.body)
     res.send({rs:true, data: result})
 })
 
 route.post('/createUserRelation',async (req:Request,res: Response) => {
     const {userName,roleTitle} = req.body
 
-    const user = User.find({
-        name:userName
-    })
-    const userRole = UserRole.find({
+    const user = new User(await UserRole.findOne({
+            name: userName
+        })
+    )
+    const userRole = new UserRole( await UserRole.findOne({
         title: roleTitle
-    })
+    }))
 
-    if (!!user && !!userRole) {
-        // console.log(user, userRole);
-        // UserRoleUser.createUserRoleUser({user: user, userRole: userRole})
-    }
-    res.send({rs:true, data: {user, userRole}})
+    await new UserRoleUser({user,userRole}).save()
+
+
+
+
+
+
 })
 
 
