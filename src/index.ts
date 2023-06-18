@@ -2,10 +2,13 @@ import  express, {Request, Response}  from "express"
 import  bodyParser, {json} from 'body-parser'
 import { mongoConnection } from "./initialDB"
 require('dotenv-flow').config() 
+var cors = require('cors');
 import {User} from "./models/user.model"
 import route from "./routers/index.route"
 
 const app = express()
+app.use(cors());
+
 //add body parser 
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())

@@ -1,7 +1,11 @@
+import { UserRole } from './../models/userRole.model';
+import { UserInfo } from './../models/userInfo.model';
+import mongoose from 'mongoose';
 import { Router } from "express";
 import express, {Request, Response}  from "express"
 import {User} from "../models/user.model"
 import { Product , IProduct} from "../models/product.model";
+import { UserRoleUser } from '../models/userRoleUser.model';
 const route = Router() 
 route.post('/', (req: Request, res: Response) => {
 
@@ -67,11 +71,55 @@ route.get('/getProductAll', async (req: Request, res: Response) => {
     res.send({rs:true, data: productList})
 })
 
+//get one product 
+route.get('/getProduct/:id', async (req:Request, res: Response) => {
+    const {id} = req.params
+    // console.log(id);
+    let newId = new mongoose.Schema.Types.ObjectId(id)
+    let findproduct = await Product.getProductById(newId)
+    if (!findproduct) {
+        res.send({rs:false, message: "cannot find the right product"})
+    }
+    res.send({rs:true, data: findproduct})
+})
+
+
 //create a new 
-route.post('/create',async (req:Request, res: Response) => {
+route.post('/createNewProduct',async (req:Request, res: Response) => {
     let result = await Product.createNewProduct(req.body)
+    // console.log(req.body);
     res.send({rs:true, data: result})
 })
 
+route.post('/createNewUserInfo', async (req: Request, res: Response) => {
+    let result = await UserInfo.createNewUserInfo(req.body)
+    res.send({rs:true, data: result})
+})
+
+route.post('/createUserRole', async (req: Request, res: Response) => {
+    let result = await UserRole.createUserRole(req.body)
+    res.send({rs:true, data: result})
+})
+
+route.post('/createUserRelation',async (req:Request,res: Response) => {
+    const {userName,roleTitle} = req.body
+
+    const user = User.find({
+        name:userName
+    })
+    const userRole = UserRole.find({
+        title: roleTitle
+    })
+
+    if (!!user && !!userRole) {
+        // console.log(user, userRole);
+        // UserRoleUser.createUserRoleUser({user: user, userRole: userRole})
+    }
+    res.send({rs:true, data: {user, userRole}})
+})
+
+
 export default route
+
+
 
